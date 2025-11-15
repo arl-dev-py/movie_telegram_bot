@@ -171,3 +171,4 @@ def register_movie_budget_handlers(bot: TeleBot, user_states: dict):
         except Exception as e:
             logger.error(f"Ошибка при обработке callback 'budget_page:': {e}")
             bot.send_message(call.message.chat.id, "Произошла ошибка при переходе на другую страницу.", reply_markup=search_subkeyboard())
+#

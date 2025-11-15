@@ -147,3 +147,4 @@ def register_movie_name_handlers(bot: TeleBot, user_states: dict):
         except Exception as e:
             logger.exception(f"Неизвестная ошибка в search_by_name для '{movie_name_query}': {e}")
             bot.send_message(message.chat.id, "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз.", reply_markup=search_subkeyboard())
+#

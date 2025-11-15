@@ -61,4 +61,4 @@ def register_handlers(bot: TeleBot):
     register_movie_rating_handlers(bot, user_states)
     register_movie_budget_handlers(bot, user_states)
 
-    logger.info("All handlers registered successfully.")
+    logger.info("All handlers registered successfully.")#
