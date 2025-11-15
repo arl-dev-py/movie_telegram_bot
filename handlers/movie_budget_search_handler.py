@@ -18,12 +18,12 @@ DEFAULT_LIMIT = 5
 
 def register_movie_budget_handlers(bot: TeleBot, user_states: dict):
 
-    @bot.message_handler(func=lambda m: m.text == "По бюджету")
+    @bot.message_handler(func=lambda m: m.text == "По бюджету") # обработчик кнопки поиска по бюджету
     def ask_min_budget(message):
         bot.send_message(message.chat.id, "Введите минимальный бюджет фильма в миллионах долларов (например, 50):")
         user_states[message.chat.id] = 'waiting_for_min_budget'
 
-    @bot.message_handler(func=lambda m: user_states.get(m.chat.id) == 'waiting_for_min_budget')
+    @bot.message_handler(func=lambda m: user_states.get(m.chat.id) == 'waiting_for_min_budget') # обработчик введенного пользователем бюджета по поиску фильма
     def process_budget_input(message):
         try:
             min_budget_str = message.text.replace(',', '.')
@@ -46,7 +46,7 @@ def register_movie_budget_handlers(bot: TeleBot, user_states: dict):
             logger.exception(f"Непредвиденная ошибка при обработке бюджета от {message.from_user.id}: {e}")
             bot.send_message(message.chat.id, "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз.", reply_markup=search_subkeyboard())
 
-    def _search_movies_by_budget(bot: TeleBot, chat_id, min_budget_usd, page=1):
+    def _search_movies_by_budget(bot: TeleBot, chat_id, min_budget_usd, page=1): # функция отправки запроса к АПИ Поиска фильмов по минимальному бюджету
         api_key = os.getenv("POISKINO_API_KEY")
         if not api_key:
             logger.error("API ключ не найден")
@@ -138,7 +138,7 @@ def register_movie_budget_handlers(bot: TeleBot, user_states: dict):
             logger.exception(f"Неизвестная ошибка в _search_movies_by_budget для '{min_budget_usd}' (page {page}): {e}")
             bot.send_message(chat_id, "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз.", reply_markup=search_subkeyboard())
 
-    def create_pagination_keyboard(bot: TeleBot, chat_id, min_budget_usd, current_page, total_movies):
+    def create_pagination_keyboard(bot: TeleBot, chat_id, min_budget_usd, current_page, total_movies): # создаем InLine клавиатуру для просмотра результата поисков фильмов по бюджету
         keyboard = InlineKeyboardMarkup()
         buttons = []
 
@@ -156,7 +156,7 @@ def register_movie_budget_handlers(bot: TeleBot, user_states: dict):
         bot.send_message(chat_id, "Листайте результаты:", reply_markup=keyboard)
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('budget_page:'))
-    def budget_page_callback(call):
+    def budget_page_callback(call): # реализация InLine клавиатуры
         bot.answer_callback_query(call.id)
         try:
             _, min_budget_usd_str, page_str = call.data.split(':')

@@ -16,12 +16,12 @@ DEFAULT_LIMIT = 5
 
 def register_movie_rating_handlers(bot: TeleBot, user_states: dict):
 
-    @bot.message_handler(func=lambda m: m.text == "По рейтингу")
+    @bot.message_handler(func=lambda m: m.text == "По рейтингу") # обработчик кнопки "По рейтингу"
     def ask_min_rating(message):
         bot.send_message(message.chat.id, "Введите минимальный рейтинг Кинопоиска (например, 7.5):")
         user_states[message.chat.id] = 'waiting_for_min_rating'
 
-    @bot.message_handler(func=lambda m: user_states.get(m.chat.id) == 'waiting_for_min_rating')
+    @bot.message_handler(func=lambda m: user_states.get(m.chat.id) == 'waiting_for_min_rating') # обработчик состояния пользователь, реализация поиска фильма по рейтингу
     def process_rating_input(message):
         try:
             min_rating_str = message.text.replace(',', '.')
@@ -124,7 +124,7 @@ def register_movie_rating_handlers(bot: TeleBot, user_states: dict):
             logger.exception(f"Неизвестная ошибка в search_movies_by_rating для '{min_rating}' (page {page}): {e}")
             bot.send_message(chat_id, "Произошла непредвиденная ошибка. Пожалуйста, попробуйте еще раз.", reply_markup=search_subkeyboard())
 
-    def create_pagination_keyboard(bot: TeleBot, chat_id, min_rating, current_page, total_movies):
+    def create_pagination_keyboard(bot: TeleBot, chat_id, min_rating, current_page, total_movies): # создание InLine клавиатуры для вывода результатов фильмов
         keyboard = InlineKeyboardMarkup()
         buttons = []
 
@@ -142,7 +142,7 @@ def register_movie_rating_handlers(bot: TeleBot, user_states: dict):
         bot.send_message(chat_id, "Листайте результаты:", reply_markup=keyboard)
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith('rating_page:'))
-    def rating_page_callback(call):
+    def rating_page_callback(call): # реализация InLine клавиатуры
         bot.answer_callback_query(call.id)
         try:
             _, min_rating_str, page_str = call.data.split(':')

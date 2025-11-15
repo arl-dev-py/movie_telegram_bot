@@ -15,18 +15,18 @@ DEFAULT_LIMIT = 10
 
 def register_movie_name_handlers(bot: TeleBot, user_states: dict):
 
-    @bot.message_handler(func=lambda m: m.text == "Поиск фильма/сериала")
+    @bot.message_handler(func=lambda m: m.text == "Поиск фильма/сериала") # обработчик кнопки "Поиск фильма/сериала"
     def search_menu(message):
         logger.info(f'User {message.from_user.id} открыл меню поиска')
         bot.send_message(message.chat.id, "Выберите способ поиска:", reply_markup=search_subkeyboard())
 
-    @bot.message_handler(func=lambda m: m.text == "По названию")
+    @bot.message_handler(func=lambda m: m.text == "По названию") # обработчик кнопки "По названию"
     def ask_movie_name(message):
         logger.info(f'User {message.from_user.id} выбрал поиск по названию')
         bot.send_message(message.chat.id, "Введите название фильма/сериала:")
         user_states[message.chat.id] = 'waiting_for_movie_name'
 
-    @bot.message_handler(func=lambda m: user_states.get(m.chat.id) == 'waiting_for_movie_name')
+    @bot.message_handler(func=lambda m: user_states.get(m.chat.id) == 'waiting_for_movie_name') # обработчик состояния пользователь, реализация поиска фильма по имени
     def search_by_name(message):
         movie_name_query = message.text.strip()
         if message.chat.id in user_states:
@@ -108,7 +108,6 @@ def register_movie_name_handlers(bot: TeleBot, user_states: dict):
 
                     if poster_url:
                         try:
-                            # Добавляем markup_reply=main_keyboard() для возврата основных кнопок
                             bot.send_photo(chat_id=message.chat.id, photo=poster_url, caption=message_text, parse_mode='Markdown', reply_markup=search_subkeyboard())
                             logger.info(f"Отправлено фото и информация для '{title}'")
                         except Exception as photo_e:

@@ -19,7 +19,7 @@ user_states = {}
 def register_handlers(bot: TeleBot):
     create_tables()
 
-    @bot.message_handler(commands=['start'])
+    @bot.message_handler(commands=['start']) # обработчик команды /start
     def start(message):
         logger.info(f'User {message.from_user.id} started the bot')
         bot.send_message(
@@ -28,14 +28,14 @@ def register_handlers(bot: TeleBot):
             reply_markup=main_keyboard()
         )
 
-    @bot.message_handler(func=lambda m: m.text == "Назад", chat_types=['private'])
+    @bot.message_handler(func=lambda m: m.text == "Назад", chat_types=['private']) # обработчик кнопки "Назад"
     def back_to_main(message):
         logger.info(f'User {message.from_user.id} ({message.from_user.first_name}) вернулся в основное меню')
         if message.chat.id in user_states:
             del user_states[message.chat.id]
         bot.send_message(message.chat.id, "С чего начнем?", reply_markup=main_keyboard())
 
-    @bot.message_handler(func=lambda m: m.text == "История запросов", chat_types=['private'])
+    @bot.message_handler(func=lambda m: m.text == "История запросов", chat_types=['private']) # обработчик кнопки "История запросов"
     def history_command(message):
         logger.info(f'User {message.from_user.id} ({message.from_user.first_name}) запросил историю')
         user_id = message.from_user.id
@@ -51,7 +51,7 @@ def register_handlers(bot: TeleBot):
             bot.send_message(message.chat.id, "История запросов пуста.")
 
 
-    @bot.message_handler(func=lambda m: m.text == "Поиск фильма/сериала", chat_types=['private'])
+    @bot.message_handler(func=lambda m: m.text == "Поиск фильма/сериала", chat_types=['private']) # обработчик кнопки "Поиск фильма/сериала"
     def search_menu(message):
         logger.info(f'User {message.from_user.id} ({message.from_user.first_name}) выбрал поиск фильма/сериала')
         bot.send_message(message.chat.id, "Выберите способ поиска:", reply_markup=search_subkeyboard())
